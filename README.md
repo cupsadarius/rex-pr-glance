@@ -2,9 +2,9 @@
 
 A [Rex](https://www.superlogical.com/rex) plugin that shows the GitHub pull
 request of the branch you work on, in a pane beside your terminal. The pane is
-[PR Glance](https://github.com/cupsadarius/pr-glance): CI checks, review
-decision, stack, comments and review threads, read through your authenticated
-`gh`. It is read-only against GitHub.
+[PR Glance](https://github.com/cupsadarius/pr-glance): merge readiness, CI
+checks, reviewers, open threads, stack, activity, comments and review threads,
+read through your authenticated `gh`. It is read-only against GitHub.
 
 The pane follows the terminal you work in. When you focus another terminal in
 the same window, the pane shows that terminal's checkout within two seconds.
