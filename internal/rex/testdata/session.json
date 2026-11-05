@@ -1,0 +1,31 @@
+{
+  "session_id": "session:s1",
+  "active_window_id": "window:w1",
+  "clients": [
+    {"client_id": "client:app", "info": {"kind": "app"}},
+    {"client_id": "client:cli", "info": {"kind": "cli"}}
+  ],
+  "windows": [
+    {
+      "window_id": "window:w1",
+      "focused_block_id": "block:editor",
+      "layers": [
+        {"kind": "tiled", "blocks": [
+          {"block_id": "block:editor", "flavor": "com.superlogical.terminal.shell"},
+          {"block_id": "block:claude", "flavor": "com.superlogical.terminal.shell"},
+          {"block_id": "block:glance", "flavor": "com.superlogical.terminal.shell"}
+        ]}
+      ]
+    },
+    {
+      "window_id": "window:w2",
+      "focused_block_id": "block:other",
+      "layers": [
+        {"kind": "tiled", "blocks": [
+          {"block_id": "block:other", "flavor": "com.superlogical.terminal.shell"},
+          {"block_id": "block:onboard", "flavor": "com.superlogical.onboarding.onboarding"}
+        ]}
+      ]
+    }
+  ]
+}
