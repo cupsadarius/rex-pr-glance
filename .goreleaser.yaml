@@ -1,0 +1,67 @@
+# GoReleaser configuration for rex-pr-glance.
+# Produces four CGO-free archives (darwin/linux x amd64/arm64), each holding the
+# single executable at the archive root, plus a checksums.txt that
+# scripts/install.sh verifies against.
+version: 2
+
+project_name: rex-pr-glance
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - id: rex-pr-glance
+    main: ./cmd/rex-pr-glance
+    binary: rex-pr-glance
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X main.version={{ .Version }}
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+archives:
+  - id: rex-pr-glance
+    ids:
+      - rex-pr-glance
+    formats:
+      - tar.gz
+    # rex-pr-glance_0.1.0_darwin_arm64.tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: false
+    # Only the executable ships; scripts/install.sh extracts exactly this member.
+    # "none*" matches nothing and suppresses GoReleaser's default README/LICENSE
+    # inclusion, which an empty list does not.
+    files:
+      - none*
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-snapshot"
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+release:
+  github:
+    owner: cupsadarius
+    name: rex-pr-glance
+  draft: false
+  prerelease: auto
