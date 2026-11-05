@@ -31,6 +31,7 @@ type View struct {
 	Windows []struct {
 		WindowID       string `json:"window_id"`
 		FocusedBlockID string `json:"focused_block_id"`
+		ZoomedBlockID  string `json:"zoomed_block_id"`
 		Layers         []struct {
 			Blocks []struct {
 				BlockID string `json:"block_id"`
@@ -42,8 +43,9 @@ type View struct {
 
 // Select picks the working block: the focused terminal in self's window,
 // else prev if it is still a terminal there, else the first other terminal.
-// Visible is true when self's window is active and an app (not the CLI) is
-// attached to the session.
+// Visible is true when self's window is the session's active window, no other
+// block is zoomed over it, and a Rex app is attached. The app attaches to every
+// session, so a pane in a session the app does not show still counts as visible.
 func Select(v View, self, prev string) (working string, visible bool) {
 	for _, w := range v.Windows {
 		var terminals []string
@@ -76,9 +78,9 @@ func Select(v View, self, prev string) (working string, visible bool) {
 		case len(terminals) > 0:
 			working = terminals[0]
 		}
-		if w.WindowID == v.ActiveWindowID {
+		if w.WindowID == v.ActiveWindowID && (w.ZoomedBlockID == "" || w.ZoomedBlockID == self) {
 			for _, c := range v.Clients {
-				if c.Info.Kind != "cli" {
+				if c.Info.Kind == "app" {
 					visible = true
 				}
 			}

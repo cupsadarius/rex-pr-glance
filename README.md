@@ -62,9 +62,10 @@ The action is also in the command palette under "PR Glance".
 
 ```lua
 require("rex-pr-glance").setup{
+  side = "right",        -- where the pane opens: "right" or "left"
   ratio = 0.65,          -- the part of the split the focused terminal keeps
   label = "pr-glance",   -- the block label that marks the pane
-  bin = nil,             -- path to rex-pr-glance; default bin/ beside init.lua
+  bin = nil,             -- path to rex-pr-glance; default: bin/ in this clone
 }
 ```
 
@@ -73,8 +74,11 @@ require("rex-pr-glance").setup{
 `rex-pr-glance view [--from BLOCK]` runs the pane. It needs `REX_SESSION` and
 `REX_BLOCK`, which Rex sets in every terminal. `--from` names the terminal to
 follow first. It reads Rex state with `rex session inspect --json` and
-`rex block call process` every two seconds, and polls GitHub only while its
-window is the active window and a Rex app is attached.
+`rex block call process` every two seconds. It polls GitHub only while its
+window is its session's active window, no other block is zoomed over it, and a
+Rex app is attached to the session. The Rex app attaches to every session, so
+a pane in a session you are not looking at still polls when its window is that
+session's active window.
 
 `z` in the pane runs `rex zoom` on the pane. Every other key is PR Glance's; see
 its [controls](https://github.com/cupsadarius/pr-glance#controls).
@@ -84,6 +88,7 @@ The discussion cache lives in `$XDG_STATE_HOME/rex-pr-glance`, default
 
 ## Remote Rex servers
 
-Rex runs a key-bound action on the host of the session. To use the plugin in a
-session on a remote Rex server, clone and install it at the same path under the
-home directory on that host.
+Rex runs a key-bound action on the host of the session, and the action starts
+the binary by its absolute local path. To use the plugin in a session on a
+remote Rex server, clone and install it at the same absolute path on that host,
+or set `bin` to the path there.

@@ -76,6 +76,28 @@ func TestSelectVisibility(t *testing.T) {
 	if _, vis := Select(cliOnly, "block:glance", ""); vis {
 		t.Fatal("a session with only CLI clients is visible")
 	}
+	agentOnly := view(t, func(v *View) { v.Clients[0].Info.Kind = "agent"; v.Clients = v.Clients[:1] })
+	if _, vis := Select(agentOnly, "block:glance", ""); vis {
+		t.Fatal("a session with only an agent client is visible")
+	}
+	zoomedOther := view(t, func(v *View) { v.Windows[0].ZoomedBlockID = "block:editor" })
+	if _, vis := Select(zoomedOther, "block:glance", ""); vis {
+		t.Fatal("the pane is visible while another block is zoomed over it")
+	}
+	zoomedSelf := view(t, func(v *View) { v.Windows[0].ZoomedBlockID = "block:glance" })
+	if _, vis := Select(zoomedSelf, "block:glance", ""); !vis {
+		t.Fatal("the zoomed pane is not visible")
+	}
+}
+
+func TestResolveFallsBackToChildCWD(t *testing.T) {
+	b, _ := os.ReadFile("testdata/session.json")
+	dir := t.TempDir()
+	f := &fakeRunner{session: string(b), process: `{"foreground":{},"child":{"cwd":"` + dir + `"}}`}
+	s, err := NewResolver(f, "session:s1", "block:glance", "").Resolve(context.Background())
+	if err != nil || s.CWD != dir {
+		t.Fatalf("source = %+v, err = %v", s, err)
+	}
 }
 
 func TestDecodePWD(t *testing.T) {

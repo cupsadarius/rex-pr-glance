@@ -13,6 +13,8 @@ local M = {}
 M.version = "0.1.0"
 
 M.options = {
+  -- Where the pane opens beside the focused terminal: "right" or "left".
+  side = "right",
   -- The part of the split the focused terminal keeps, between 0 and 1.
   ratio = 0.65,
   -- The label that marks the pane, so the action finds it again.
@@ -85,8 +87,9 @@ function M.toggle(ctx)
     session_id = ctx.session_id,
     anchor_id = ctx.block_id,
     direction = "horizontal",
-    side = "after",
-    ratio = M.options.ratio,
+    side = M.options.side == "left" and "before" or "after",
+    -- ratio is the share of the left part; the terminal keeps M.options.ratio.
+    ratio = M.options.side == "left" and 1 - M.options.ratio or M.options.ratio,
     focus = false,
     layout = rex.layout.block({ flavor = SHELL, label = M.options.label, options = options }),
   })
@@ -103,6 +106,10 @@ function M.setup(opts)
     end
   end
   M.options.bin = expand_home(M.options.bin or (module_dir() .. "/bin/rex-pr-glance"))
+  if M.options.side ~= "right" and M.options.side ~= "left" then
+    rex.log("warn", "rex-pr-glance: side must be \"right\" or \"left\"; using \"right\"")
+    M.options.side = "right"
+  end
 
   rex.action({
     name = "pr_glance",
