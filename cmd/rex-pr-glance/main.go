@@ -3,6 +3,7 @@
 package main
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"flag"
@@ -52,10 +53,12 @@ func view(ctx context.Context, args []string) error {
 	if flags.NArg() > 0 {
 		return fmt.Errorf("unexpected argument %q\n%s", flags.Arg(0), usage)
 	}
-	session, self := os.Getenv("REX_SESSION"), os.Getenv("REX_BLOCK")
-	if session == "" || self == "" {
-		return errors.New("REX_SESSION and REX_BLOCK are not set; run inside a Rex terminal")
+	self := os.Getenv("REX_BLOCK")
+	if self == "" {
+		return errors.New("REX_BLOCK is not set; run inside a Rex terminal")
 	}
+	// Rex accepts a block ID wherever it takes a session; REX_SESSION is optional.
+	session := cmp.Or(os.Getenv("REX_SESSION"), self)
 	dir, err := stateDir()
 	if err != nil {
 		return err

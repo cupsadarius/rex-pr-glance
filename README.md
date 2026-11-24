@@ -71,8 +71,8 @@ require("rex-pr-glance").setup{
 
 ## The binary
 
-`rex-pr-glance view [--from BLOCK]` runs the pane. It needs `REX_SESSION` and
-`REX_BLOCK`, which Rex sets in every terminal. `--from` names the terminal to
+`rex-pr-glance view [--from BLOCK]` runs the pane. It needs `REX_BLOCK`, which
+Rex sets in every terminal, and uses `REX_SESSION` when set. `--from` names the terminal to
 follow first. It reads Rex state with `rex session inspect --json` and
 `rex block call process` every two seconds. It polls GitHub only while its
 window is its session's active window, no other block is zoomed over it, and a

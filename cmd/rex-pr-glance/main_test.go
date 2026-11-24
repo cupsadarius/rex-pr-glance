@@ -28,16 +28,10 @@ func TestVersionAndUnknownSubcommands(t *testing.T) {
 }
 
 func TestViewRequiresRexEnvironment(t *testing.T) {
-	t.Setenv("REX_SESSION", "")
-	t.Setenv("REX_BLOCK", "block:b1")
-	err := run([]string{"view"}, &bytes.Buffer{})
-	if err == nil || !strings.Contains(err.Error(), "REX_SESSION") {
-		t.Fatalf("err = %v", err)
-	}
 	t.Setenv("REX_SESSION", "session:s1")
 	t.Setenv("REX_BLOCK", "")
-	err = run([]string{"view"}, &bytes.Buffer{})
-	if err == nil || !strings.Contains(err.Error(), "REX_BLOCK") {
+	err := run([]string{"view"}, &bytes.Buffer{})
+	if err == nil || !strings.Contains(err.Error(), "REX_BLOCK") || strings.Contains(err.Error(), "REX_SESSION") {
 		t.Fatalf("err = %v", err)
 	}
 }
